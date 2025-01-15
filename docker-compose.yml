@@ -3,13 +3,13 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     container_name: indexer
     volumes:
-      - ./index_data:/usr/share/elasticsearch/data
+      - ./index2_data:/usr/share/elasticsearch/data
     environment:
       discovery.type: "single-node"
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
 
   service:
-    image: ineo-service:0.1
+    image: ghcr.io/knaw-huc/ineo_service:latest
     container_name: service
     ports:
       - "8000:8000"
@@ -24,7 +24,7 @@ services:
       - ./data:/data
 
   ineo:
-    image: ineo-web:0.1
+    image: ghcr.io/knaw-huc/ineo_frontend:latest
     container_name: ineo
     ports:
       - "3000:80"

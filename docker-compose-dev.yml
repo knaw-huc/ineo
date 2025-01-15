@@ -22,7 +22,7 @@ services:
       - "9200:9200"
 
   service:
-    image: ineo-service:0.1
+    image: ghcr.io/knaw-huc/ineo_service:latest
     container_name: service
     ports:
       - "8000:8000"
