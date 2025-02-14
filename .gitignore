@@ -8,3 +8,6 @@ json_data
 json_data_first
 service
 *.sh
+.env
+wp-content
+wpdb_data
