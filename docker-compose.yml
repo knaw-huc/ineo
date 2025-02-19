@@ -11,23 +11,50 @@ services:
   service:
     image: ghcr.io/knaw-huc/ineo_service:latest
     container_name: service
-    ports:
-      - "8000:8000"
     depends_on:
       - indexer
     environment:
-        ELASTICSEARCH_HOST: "indexer"
-        ELASTICSEARCH_PORT: 9200
-        ELASTICSEARCH_INDEX: "ineo"
-        FRONTEND_HOST: "http://localhost:3000"
+      ELASTICSEARCH_HOST: "indexer"
+      ELASTICSEARCH_PORT: 9200
+      ELASTICSEARCH_INDEX: "ineo"
+      FRONTEND_HOST: "http://localhost:3000,http://localhost:8080,http://ineo.diginfra.org"
     volumes:
       - ./data:/data
 
   ineo:
     image: ghcr.io/knaw-huc/ineo_frontend:latest
     container_name: ineo
-    ports:
-      - "3000:80"
     depends_on:
       - service
       - indexer
+
+  wpdb:
+    image: mariadb:latest
+    container_name: wpdb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_HOST: ${WORDPRESS_DB_HOST}
+      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+      MYSQL_USER: ${WORDPRESS_DB_USER}
+      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    volumes:
+      - ./wpdb_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    depends_on:
+      - wpdb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wordpress.rule=Host(`ineo.diginfra.org`)"
+      - "traefik.http.routers.wordpress.entrypoints=web"
+      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
