@@ -1,9 +1,15 @@
+volumes:
+  index2_data:
+  service-data:
+  wpdb_data:
+  wp-content:
+
 services:
   indexer:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     container_name: indexer
     volumes:
-      - ./index2_data:/usr/share/elasticsearch/data
+      - index2_data:/usr/share/elasticsearch/data
     environment:
       discovery.type: "single-node"
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
@@ -19,7 +25,7 @@ services:
       ELASTICSEARCH_INDEX: "ineo"
       FRONTEND_HOST: "http://localhost:3000,http://localhost:8080,http://ineo.diginfra.org,http://ineo.dev.huc.knaw.nl"
     volumes:
-      - ./data:/data
+      - service-data:/data
 
   ineo:
     image: ghcr.io/knaw-huc/ineo_frontend:latest
@@ -38,7 +44,7 @@ services:
       MYSQL_USER: ${WORDPRESS_DB_USER}
       MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
     volumes:
-      - ./wpdb_data:/var/lib/mysql
+      - wpdb_data:/var/lib/mysql
 
   wordpress:
     image: wordpress:latest
@@ -57,4 +63,4 @@ services:
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
     volumes:
-      - ./wp-content:/var/www/html/wp-content
+      - wp-content:/var/www/html/wp-content
