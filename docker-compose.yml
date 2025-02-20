@@ -76,9 +76,6 @@ services:
     container_name: nginx
     networks:
       - traefik-public
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/conf.d:/etc/nginx/conf.d
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nginx.rule=Host(`ineo.dev.huc.knaw.nl`)"
