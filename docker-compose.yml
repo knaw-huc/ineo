@@ -67,6 +67,7 @@ services:
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
     networks:
       - traefik-public
+      - ineo_default
     depends_on:
       - wpdb
     environment:
