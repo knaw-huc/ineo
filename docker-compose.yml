@@ -12,6 +12,8 @@ services:
   indexer:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     container_name: indexer
+    networks:
+      - traefik-public
     volumes:
       - index2_data:/usr/share/elasticsearch/data
     environment:
@@ -21,11 +23,8 @@ services:
   service:
     image: ghcr.io/knaw-huc/ineo_service:latest
     container_name: service
-    #    labels:
-    #      - "traefik.enable=true"
-    #      - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
-    #      - "traefik.http.routers.wordpress.entrypoints=http"
-    #      - "traefik.http.services.wordpress.loadbalancer.server.port=8000"
+    networks:
+      - traefik-public
     depends_on:
       - indexer
     environment:
@@ -36,14 +35,14 @@ services:
     volumes:
       - service-data:/data
 
-  ineo:
-    image: ghcr.io/knaw-huc/ineo_frontend:latest
-    container_name: ineo
-    environment:
-      REACT_APP_SERVICE_URL: "http://service:8000"
-    depends_on:
-      - service
-      - indexer
+#  ineo:
+#    image: ghcr.io/knaw-huc/ineo_frontend:latest
+#    container_name: ineo
+#    environment:
+#      REACT_APP_SERVICE_URL: "http://service:8000"
+#    depends_on:
+#      - service
+#      - indexer
 
   wpdb:
     image: mariadb:latest
@@ -54,6 +53,8 @@ services:
       MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
       MYSQL_USER: ${WORDPRESS_DB_USER}
       MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+    networks:
+      - traefik-public
     volumes:
       - wpdb_data:/var/lib/mysql
 
@@ -67,7 +68,6 @@ services:
       - "traefik.http.services.nginx.loadbalancer.server.port=80"
     networks:
       - traefik-public
-      - ineo_default
     depends_on:
       - wpdb
     environment:
