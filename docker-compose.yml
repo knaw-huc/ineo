@@ -22,6 +22,8 @@ services:
       - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
       - "traefik.http.routers.wordpress.entrypoints=http"
       - "traefik.http.services.wordpress.loadbalancer.server.port=8000"
+    ports:
+      - "8000:8000"
     depends_on:
       - indexer
     environment:
@@ -39,11 +41,11 @@ services:
       REACT_APP_SERVICE_URL: "http://service:8000"
     ports:
       - "8080:80"
-#    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
-#      - "traefik.http.routers.wordpress.entrypoints=http"
-#      - "traefik.http.services.wordpress.loadbalancer.server.port=3000"
+    #    labels:
+    #      - "traefik.enable=true"
+    #      - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
+    #      - "traefik.http.routers.wordpress.entrypoints=http"
+    #      - "traefik.http.services.wordpress.loadbalancer.server.port=3000"
     depends_on:
       - service
       - indexer
