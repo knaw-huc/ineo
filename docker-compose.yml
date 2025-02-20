@@ -23,7 +23,7 @@ services:
       ELASTICSEARCH_HOST: "indexer"
       ELASTICSEARCH_PORT: 9200
       ELASTICSEARCH_INDEX: "ineo"
-      FRONTEND_HOST: "http://localhost:3000,http://localhost:8080,http://ineo.diginfra.org,http://ineo.dev.huc.knaw.nl"
+      FRONTEND_HOST: "http://ineo.dev.huc.knaw.nl,https://ineo.dev.huc.knaw.nl"
     volumes:
       - service-data:/data
 
