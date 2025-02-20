@@ -17,11 +17,11 @@ services:
   service:
     image: ghcr.io/knaw-huc/ineo_service:latest
     container_name: service
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
-      - "traefik.http.routers.wordpress.entrypoints=http"
-      - "traefik.http.services.wordpress.loadbalancer.server.port=8000"
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
+#      - "traefik.http.routers.wordpress.entrypoints=http"
+#      - "traefik.http.services.wordpress.loadbalancer.server.port=8000"
     ports:
       - "8000:8000"
     depends_on:
@@ -82,3 +82,12 @@ services:
     #      - "8080:80"
     volumes:
       - wp-content:/var/www/html/wp-content
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.nginx.rule=Host(`ineo.dev.huc.knaw.nl`)"
+        - "traefik.http.routers.nginx.entrypoints=http"
+        - "traefik.http.services.nginx.loadbalancer.server.port=80"
