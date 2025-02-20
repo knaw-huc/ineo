@@ -30,6 +30,8 @@ services:
   ineo:
     image: ghcr.io/knaw-huc/ineo_frontend:latest
     container_name: ineo
+    ports:
+      - "8080:80"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
@@ -67,7 +69,7 @@ services:
       WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
       WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
-    ports:
-      - "8080:80"
+#    ports:
+#      - "8080:80"
     volumes:
       - wp-content:/var/www/html/wp-content
