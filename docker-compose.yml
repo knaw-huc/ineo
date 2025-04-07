@@ -12,6 +12,7 @@ services:
   indexer:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
     container_name: indexer
+    restart: unless-stopped
     networks:
       - traefik-public
     volumes:
@@ -23,6 +24,7 @@ services:
   service:
     image: ghcr.io/knaw-huc/ineo_service:latest
     container_name: service
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.service.rule=Host(`ineo-service.dev.diginfra.org`)"
