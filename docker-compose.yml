@@ -23,6 +23,11 @@ services:
   service:
     image: ghcr.io/knaw-huc/ineo_service:latest
     container_name: service
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.service.rule=Host(`ineo-service.dev.diginfra.org`)"
+      - "traefik.http.routers.service.entrypoints=http"
+      - "traefik.http.services.service.loadbalancer.server.port=8000"
     networks:
       - traefik-public
     depends_on:
@@ -31,42 +36,43 @@ services:
       ELASTICSEARCH_HOST: "indexer"
       ELASTICSEARCH_PORT: 9200
       ELASTICSEARCH_INDEX: "ineo"
-      FRONTEND_HOST: "http://ineo.dev.huc.knaw.nl,https://ineo.dev.huc.knaw.nl,http://194.171.4.136"
+      FRONTEND_HOST: "http://ineo.dev.diginfra.org,https://ineo.dev.diginfra.org"
+#      FRONTEND_HOST: "http://ineo.dev.huc.knaw.nl,https://ineo.dev.huc.knaw.nl,http://194.171.4.136"
     volumes:
       - service-data:/data
 
-  wpdb:
-    image: mariadb:latest
-    container_name: wpdb
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_HOST: ${WORDPRESS_DB_HOST}
-      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
-      MYSQL_USER: ${WORDPRESS_DB_USER}
-      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-    networks:
-      - traefik-public
-    volumes:
-      - wpdb_data:/var/lib/mysql
+#  wpdb:
+#    image: mariadb:latest
+#    container_name: wpdb
+#    environment:
+#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#      MYSQL_HOST: ${WORDPRESS_DB_HOST}
+#      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+#      MYSQL_USER: ${WORDPRESS_DB_USER}
+#      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+#    networks:
+#      - traefik-public
+#    volumes:
+#      - wpdb_data:/var/lib/mysql
 
-  wordpress:
-    image: wordpress:latest
-    container_name: wordpress
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
-      - "traefik.http.routers.wordpress.entrypoints=http"
-      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
-    networks:
-      - traefik-public
-    depends_on:
-      - wpdb
-    environment:
-      REACT_APP_SERVICE_URL: "http://service:8000"
-      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
-    volumes:
-      - wp-content:/var/www/html/wp-content
+#  wordpress:
+#    image: wordpress:latest
+#    container_name: wordpress
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.wordpress.rule=Host(`ineo.dev.huc.knaw.nl`)"
+#      - "traefik.http.routers.wordpress.entrypoints=http"
+#      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
+#    networks:
+#      - traefik-public
+#    depends_on:
+#      - wpdb
+#    environment:
+#      REACT_APP_SERVICE_URL: "http://service:8000"
+#      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+#      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+#      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+#      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+#      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+#    volumes:
+#      - wp-content:/var/www/html/wp-content
