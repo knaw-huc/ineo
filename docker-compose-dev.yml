@@ -11,27 +11,35 @@ services:
   #      - "9200:9200"
 
   indexer:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
     container_name: indexer
     volumes:
-      - ./index2_data:/usr/share/elasticsearch/data
+      - ./index3_data:/usr/share/elasticsearch/data
     environment:
       discovery.type: "single-node"
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
+      xpack.security.enabled: True
+      ELASTIC_PASSWORD: "changeme"
+      xpack.security.enrollment.enabled: True
     ports:
       - "9200:9200"
 
   service:
-    image: ghcr.io/knaw-huc/ineo_service:latest
+    #image: ghcr.io/knaw-huc/ineo_service:latest
+    image: ineo-service:0.1
     container_name: service
     ports:
       - "8000:8000"
     depends_on:
       - indexer
     environment:
+      ELASTICSEARCH_SCHEME: "http"
       ELASTICSEARCH_HOST: "indexer"
       ELASTICSEARCH_PORT: 9200
       ELASTICSEARCH_INDEX: "ineo"
+      ELASTICSEARCH_USERNAME: "ineouser"
+      ELASTICSEARCH_PASSWORD: "ineopassword"
       FRONTEND_HOST: "http://localhost:3000,http://localhost:8080"
     volumes:
       - ./data:/data
