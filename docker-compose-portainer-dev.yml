@@ -37,6 +37,8 @@ services:
 #      ELASTICSEARCH_USERNAME: "ineouser"
 #      ELASTICSEARCH_PASSWORD: "ineopassword"
       FRONTEND_HOST: $FRONTEND_HOST
+      FLASK_ENV: $FLASK_ENV
+      LOG_LEVEL: $LOG_LEVEL
     volumes:
       - ./service-data:/data
     networks:
