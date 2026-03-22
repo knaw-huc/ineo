@@ -1,0 +1,85 @@
+volumes:
+  index4_data:
+  service-data:
+  wpdb_data:
+  wp-content:
+
+networks:
+  traefik-public:
+    external: true
+
+services:
+  indexer:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
+    container_name: indexer
+    volumes:
+      - ./index4_data:/usr/share/elasticsearch/data
+    environment:
+      discovery.type: "single-node"
+      ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
+#      xpack.security.enabled: True
+#      ELASTIC_PASSWORD: "changeme"
+#      xpack.security.enrollment.enabled: True
+#    ports:
+#      - "9200:9200"
+
+  service:
+    image: ghcr.io/knaw-huc/ineo_service:latest
+    container_name: service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - indexer
+    environment:
+      ELASTICSEARCH_SCHEME: "http"
+      ELASTICSEARCH_HOST: "indexer"
+      ELASTICSEARCH_PORT: 9200
+      ELASTICSEARCH_INDEX: "ineo"
+#      ELASTICSEARCH_USERNAME: "ineouser"
+#      ELASTICSEARCH_PASSWORD: "ineopassword"
+      FRONTEND_HOST: $FRONTEND_HOST
+    volumes:
+      - ./service-data:/data
+      - ./service/app.py:/app/app.py
+      - ./service/elastic_index.py:/app/elastic_index.py
+
+  ineo:
+    image: node:alpine
+    container_name: ineo
+    volumes:
+      - ./frontend:/app
+    command: sh -c "cd /app && npm install && npm start"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - service
+      - indexer
+
+#  wpdb:
+#    image: mariadb:latest
+#    container_name: wpdb
+#    environment:
+#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#      MYSQL_HOST: ${WORDPRESS_DB_HOST}
+#      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
+#      MYSQL_USER: ${WORDPRESS_DB_USER}
+#      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+#    volumes:
+#      - ./wpdb_data:/var/lib/mysql
+
+#  wordpress:
+#    image: wordpress:latest
+#    container_name: wordpress
+#    depends_on:
+#      - wpdb
+#    environment:
+#      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+#      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+#      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+#      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+#      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
+#    volumes:
+#      - ./wp-content:/var/www/html/wp-content
+#    ports:
+#      - "8080:80"
+
