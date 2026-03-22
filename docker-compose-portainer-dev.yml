@@ -40,8 +40,8 @@ services:
       FRONTEND_HOST: $FRONTEND_HOST
     volumes:
       - ./service-data:/data
-      - ./service/app.py:/app/app.py
-      - ./service/elastic_index.py:/app/elastic_index.py
+#      - ./service/app.py:/app/app.py
+#      - ./service/elastic_index.py:/app/elastic_index.py
 
   ineo:
     image: node:alpine
