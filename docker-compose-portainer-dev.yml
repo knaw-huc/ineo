@@ -17,6 +17,7 @@ services:
     environment:
       discovery.type: "single-node"
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
+      xpack.security.enabled: "false"
     networks:
       - traefik-public
 
