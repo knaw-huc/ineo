@@ -44,11 +44,12 @@ services:
 #      - ./service/elastic_index.py:/app/elastic_index.py
 
   ineo:
-    image: node:alpine
+    #image: node:alpine
+    image: registry.diginfra.net/tsd/ineo-web:test
     container_name: ineo
-    volumes:
-      - ./frontend:/app
-    command: sh -c "cd /app && npm install && npm start"
+#    volumes:
+#      - ./frontend:/app
+#    command: sh -c "cd /app && npm install && npm start"
     ports:
       - "3000:3000"
     depends_on:
