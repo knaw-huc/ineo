@@ -24,7 +24,8 @@ services:
 #      - "9200:9200"
 
   service:
-    image: ghcr.io/knaw-huc/ineo_service:test
+#    image: ghcr.io/knaw-huc/ineo_service:test
+    image: registry.diginfra.net/tsd/ineo-service:test
     container_name: service
     ports:
       - "8000:8000"
