@@ -17,11 +17,8 @@ services:
     environment:
       discovery.type: "single-node"
       ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
-#      xpack.security.enabled: True
-#      ELASTIC_PASSWORD: "changeme"
-#      xpack.security.enrollment.enabled: True
-#    ports:
-#      - "9200:9200"
+    networks:
+      - traefik-public
 
   service:
 #    image: ghcr.io/knaw-huc/ineo_service:test
@@ -41,21 +38,19 @@ services:
       FRONTEND_HOST: $FRONTEND_HOST
     volumes:
       - ./service-data:/data
-#      - ./service/app.py:/app/app.py
-#      - ./service/elastic_index.py:/app/elastic_index.py
+    networks:
+      - traefik-public
 
   ineo:
-    #image: node:alpine
     image: registry.diginfra.net/tsd/ineo-web:test
     container_name: ineo
-#    volumes:
-#      - ./frontend:/app
-#    command: sh -c "cd /app && npm install && npm start"
     ports:
       - "3000:3000"
     depends_on:
       - service
       - indexer
+    networks:
+      - traefik-public
 
 #  wpdb:
 #    image: mariadb:latest
