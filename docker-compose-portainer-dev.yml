@@ -46,7 +46,7 @@ services:
     image: registry.diginfra.net/tsd/ineo-web:test
     container_name: ineo
     ports:
-      - "3000:3000"
+      - "3000:80"
     depends_on:
       - service
       - indexer
