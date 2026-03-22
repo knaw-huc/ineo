@@ -11,3 +11,4 @@ service
 .env
 wp-content
 wpdb_data
+stack.env
