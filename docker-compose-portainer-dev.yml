@@ -25,6 +25,11 @@ services:
 #    image: ghcr.io/knaw-huc/ineo_service:test
     image: registry.diginfra.net/tsd/ineo-service:test
     container_name: service
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ineo-service.rule=Host(`ineo-service.dev.diginfra.org`)"
+      - "traefik.http.services.ineo-service.loadbalancer.server.port=8000"
+      - "traefik.http.routers.ineo-service.entrypoints=http"
     ports:
       - "8000:8000"
     depends_on:
@@ -47,6 +52,11 @@ services:
   ineo:
     image: registry.diginfra.net/tsd/ineo-web:test
     container_name: ineo
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ineo.rule=Host(`ineo.dev.diginfra.org`)"
+      - "traefik.http.services.ineo.loadbalancer.server.port=80"
+      - "traefik.http.routers.ineo.entrypoints=http"
     ports:
       - "3000:80"
     depends_on:
@@ -54,32 +64,3 @@ services:
       - indexer
     networks:
       - traefik-public
-
-#  wpdb:
-#    image: mariadb:latest
-#    container_name: wpdb
-#    environment:
-#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-#      MYSQL_HOST: ${WORDPRESS_DB_HOST}
-#      MYSQL_DATABASE: ${WORDPRESS_DB_NAME}
-#      MYSQL_USER: ${WORDPRESS_DB_USER}
-#      MYSQL_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-#    volumes:
-#      - ./wpdb_data:/var/lib/mysql
-
-#  wordpress:
-#    image: wordpress:latest
-#    container_name: wordpress
-#    depends_on:
-#      - wpdb
-#    environment:
-#      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
-#      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
-#      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
-#      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
-#      WORDPRESS_TABLE_PREFIX: ${WORDPRESS_TABLE_PREFIX}
-#    volumes:
-#      - ./wp-content:/var/www/html/wp-content
-#    ports:
-#      - "8080:80"
-
